@@ -1,6 +1,7 @@
-import { useRef, useEffect } from 'react'
+import { useRef, useEffect, useMemo } from 'react'
 import type { KYCAuthObject, KYCConfig, KYCMessageType } from '../types'
 import { useAssociatedClient } from '../hooks/useAssociatedClient'
+import { useOptionalWeavrTheme } from '../themeContext'
 
 export interface KYCProps {
   /** Authentication object containing access token */
@@ -11,6 +12,8 @@ export interface KYCProps {
   className?: string
   /** Inline styles for the container div */
   style?: React.CSSProperties
+  /** Whether to use theme styles (default: true if theme provider exists) */
+  useTheme?: boolean
   /** Called when KYC process completes successfully */
   onComplete?: (payload: unknown) => void
   /** Called when user closes the KYC flow */
@@ -26,14 +29,33 @@ export function KYC({
   config,
   className,
   style,
+  useTheme = true,
   onComplete,
   onClose,
   onError,
   onStepChange,
 }: KYCProps) {
   const { client, isAssociated, error: associateError } = useAssociatedClient(auth.accessToken)
+  const themeContext = useOptionalWeavrTheme()
   const containerRef = useRef<HTMLDivElement>(null)
   const initializedRef = useRef(false)
+
+  // Merge theme CSS with config CSS
+  const mergedConfig = useMemo(() => {
+    const baseConfig = { ...config }
+
+    // Apply theme CSS if available and useTheme is true
+    const shouldUseTheme = useTheme && themeContext
+    if (shouldUseTheme) {
+      const themeCss = themeContext.getKycCss()
+      // Merge customCssStr: theme CSS first, then user's custom CSS
+      baseConfig.customCssStr = config?.customCssStr
+        ? `${themeCss}\n${config.customCssStr}`
+        : themeCss
+    }
+
+    return baseConfig
+  }, [config, useTheme, themeContext])
 
   // Report association errors
   useEffect(() => {
@@ -63,9 +85,9 @@ export function KYC({
       }
     }
 
-    client.kyc().init(containerRef.current, auth, listener, config ?? {})
+    client.kyc().init(containerRef.current, auth, listener, mergedConfig)
     initializedRef.current = true
-  }, [client, isAssociated, auth, config, onComplete, onClose, onError, onStepChange])
+  }, [client, isAssociated, auth, mergedConfig, onComplete, onClose, onError, onStepChange])
 
   if (associateError) {
     return (

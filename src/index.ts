@@ -46,6 +46,42 @@ export {
   type ConsumerKYCProps,
 } from './components'
 
+// Theme system
+export {
+  // Pre-built themes
+  lightTheme,
+  darkTheme,
+  // Theme creation utility
+  createTheme,
+  // Theme to style conversion utilities
+  themeToInputStyles,
+  themeToSpanStyles,
+  themeToKycCss,
+  themeToContainerStyle,
+  // Types
+  type WeavrTheme,
+  type ThemeColors,
+  type ThemeTypography,
+  type ThemeSpacing,
+  type ThemeBorders,
+  type ThemeShadows,
+  type ThemeInputStyles,
+  type ThemeSpanStyles,
+  type ThemeKycStyles,
+} from './theme'
+
+// Theme context and hooks
+export {
+  WeavrThemeProvider,
+  useWeavrTheme,
+  useOptionalWeavrTheme,
+  useThemedInputStyles,
+  useThemedSpanStyles,
+  useThemedKycCss,
+  type WeavrThemeContextValue,
+  type WeavrThemeProviderProps,
+} from './themeContext'
+
 // Types
 export type {
   SecureClient,
