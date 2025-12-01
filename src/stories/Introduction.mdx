@@ -1,0 +1,71 @@
+# Weavr React SDK
+
+A React wrapper for [Weavr's secure UI component library](https://docs.weavr.io/ui-library/multi-ui-library-overview/).
+
+## Overview
+
+This SDK provides React components and hooks for integrating Weavr's PCI-compliant payment UI elements into your application. All sensitive data is handled through secure iframes, ensuring you qualify for the lowest PCI compliance level.
+
+## Installation
+
+```bash
+npm install @weavr/react-sdk
+```
+
+## Quick Start
+
+```tsx
+import { WeavrProvider, SecureInput, useSecureForm } from '@weavr/react-sdk'
+
+function App() {
+  return (
+    <WeavrProvider uiKey="your-ui-key" environment="sandbox">
+      <PasswordForm />
+    </WeavrProvider>
+  )
+}
+
+function PasswordForm() {
+  const { tokenize } = useSecureForm()
+
+  const handleSubmit = async () => {
+    const tokens = await tokenize()
+    // Send tokens to your backend
+  }
+
+  return (
+    <form onSubmit={handleSubmit}>
+      <SecureInput
+        name="password"
+        type="password"
+        options={{ placeholder: 'Enter password' }}
+      />
+      <button type="submit">Submit</button>
+    </form>
+  )
+}
+```
+
+## Components
+
+### Input Components
+
+- **SecureInput** - Capture passwords, passcodes, and card PINs securely
+- **SecureSpan** - Display card numbers, CVVs, and PINs securely
+
+### Verification Components
+
+- **KYC** - Know Your Customer verification flow for consumers
+- **KYB** - Know Your Business verification flow for corporates
+
+## Hooks
+
+- **useSecureForm** - Create forms and tokenize input values
+- **useAssociate** - Associate user auth tokens for displaying card data
+- **useWeavr** - Access the raw Weavr client and initialization state
+
+## Resources
+
+- [Weavr Documentation](https://docs.weavr.io/)
+- [API Reference](https://weavr-multi-api.redoc.ly/)
+- [Weavr Portal](https://portal.weavr.io/)
