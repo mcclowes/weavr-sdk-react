@@ -13,8 +13,10 @@ import type {
   SecureInputChangeEvent,
   SecureInputStrengthEvent,
   SecureForm,
+  SecureElementStyles,
 } from '../types'
 import { useWeavr } from '../context'
+import { useOptionalWeavrTheme } from '../themeContext'
 
 export interface SecureInputProps {
   /** Unique name for this input within the form */
@@ -27,6 +29,10 @@ export interface SecureInputProps {
   className?: string
   /** Inline styles for the container div */
   containerStyle?: React.CSSProperties
+  /** Whether to use theme styles (default: true if theme provider exists) */
+  useTheme?: boolean
+  /** Style overrides to apply on top of theme styles */
+  styleOverrides?: SecureElementStyles
   /** Called when the input is ready */
   onReady?: () => void
   /** Called when input value changes */
@@ -62,6 +68,8 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(
       options,
       className,
       containerStyle,
+      useTheme = true,
+      styleOverrides,
       onReady,
       onChange,
       onFocus,
@@ -72,6 +80,7 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(
     ref
   ) {
     const { client, isInitialized } = useWeavr()
+    const themeContext = useOptionalWeavrTheme()
     const containerRef = useRef<HTMLDivElement>(null)
     const elementRef = useRef<SecureInputElement | null>(null)
     const formRef = useRef<SecureForm | null>(null)
@@ -81,8 +90,50 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(
     const callbacksRef = useRef({ onReady, onChange, onFocus, onBlur, onKeyUp, onStrength })
     callbacksRef.current = { onReady, onChange, onFocus, onBlur, onKeyUp, onStrength }
 
+    // Compute merged styles: theme styles -> options.style -> styleOverrides
+    const mergedOptions = useMemo(() => {
+      const baseOptions = { ...options }
+
+      // Get theme styles if theme is available and useTheme is true
+      const shouldUseTheme = useTheme && themeContext
+      const themeStyles = shouldUseTheme ? themeContext.getInputStyles() : null
+
+      // Merge styles: theme -> options.style -> styleOverrides
+      if (themeStyles || styleOverrides) {
+        const mergedStyle: SecureElementStyles = {}
+
+        // Start with theme styles
+        if (themeStyles) {
+          mergedStyle.base = { ...themeStyles.base }
+          mergedStyle.empty = { ...themeStyles.empty }
+          mergedStyle.valid = { ...themeStyles.valid }
+          mergedStyle.invalid = { ...themeStyles.invalid }
+        }
+
+        // Apply options.style on top
+        if (options?.style) {
+          mergedStyle.base = { ...mergedStyle.base, ...options.style.base }
+          mergedStyle.empty = { ...mergedStyle.empty, ...options.style.empty }
+          mergedStyle.valid = { ...mergedStyle.valid, ...options.style.valid }
+          mergedStyle.invalid = { ...mergedStyle.invalid, ...options.style.invalid }
+        }
+
+        // Apply styleOverrides on top
+        if (styleOverrides) {
+          mergedStyle.base = { ...mergedStyle.base, ...styleOverrides.base }
+          mergedStyle.empty = { ...mergedStyle.empty, ...styleOverrides.empty }
+          mergedStyle.valid = { ...mergedStyle.valid, ...styleOverrides.valid }
+          mergedStyle.invalid = { ...mergedStyle.invalid, ...styleOverrides.invalid }
+        }
+
+        baseOptions.style = mergedStyle
+      }
+
+      return baseOptions
+    }, [options, useTheme, themeContext, styleOverrides])
+
     // Stabilize options by serializing - only recreate input if options actually change
-    const optionsKey = useMemo(() => JSON.stringify(options), [options])
+    const optionsKey = useMemo(() => JSON.stringify(mergedOptions), [mergedOptions])
 
     useImperativeHandle(ref, () => ({
       focus: () => elementRef.current?.focus(),

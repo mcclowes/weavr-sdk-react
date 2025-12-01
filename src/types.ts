@@ -19,7 +19,11 @@ export interface SecureElementStyle {
   margin?: string
   backgroundColor?: string
   border?: string
+  borderColor?: string
+  borderWidth?: string
+  borderStyle?: string
   borderRadius?: string
+  boxShadow?: string
 }
 
 export interface SecureElementStyleWithPseudoClasses extends SecureElementStyle {
