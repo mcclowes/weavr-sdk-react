@@ -1,6 +1,6 @@
 {
-  "name": "@weavr/react-sdk",
-  "version": "0.1.0",
+  "name": "weavr-sdk-react",
+  "version": "1.0.0",
   "description": "React SDK wrapper for Weavr's secure UI component library",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
