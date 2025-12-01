@@ -5,7 +5,7 @@
  * Themes define design tokens that are converted to Weavr-compatible styles.
  */
 
-import type { SecureElementStyles, SecureElementStyle } from './types'
+import type { SecureElementStyles, SecureElementStyle } from './types';
 
 // ============================================================================
 // Color Tokens
@@ -16,53 +16,53 @@ import type { SecureElementStyles, SecureElementStyle } from './types'
  */
 export interface ThemeColors {
   /** Primary brand color */
-  primary: string
+  primary: string;
   /** Primary color for hover states */
-  primaryHover: string
+  primaryHover: string;
   /** Primary color with transparency for focus rings */
-  primaryFocusRing: string
+  primaryFocusRing: string;
 
   /** Success/valid state color */
-  success: string
+  success: string;
   /** Success color for borders */
-  successBorder: string
+  successBorder: string;
 
   /** Error/invalid state color */
-  error: string
+  error: string;
   /** Error color for borders */
-  errorBorder: string
+  errorBorder: string;
 
   /** Warning state color */
-  warning: string
+  warning: string;
 
   /** Default text color */
-  text: string
+  text: string;
   /** Secondary/muted text color */
-  textMuted: string
+  textMuted: string;
   /** Placeholder text color */
-  textPlaceholder: string
+  textPlaceholder: string;
 
   /** Input background color */
-  inputBackground: string
+  inputBackground: string;
   /** Input border color */
-  inputBorder: string
+  inputBorder: string;
   /** Input border color on hover */
-  inputBorderHover: string
+  inputBorderHover: string;
   /** Input border color on focus */
-  inputBorderFocus: string
+  inputBorderFocus: string;
 
   /** Page/container background */
-  background: string
+  background: string;
   /** Surface/card background */
-  surface: string
+  surface: string;
 
   /** Selection background color */
-  selection: string
+  selection: string;
   /** Selection text color */
-  selectionText: string
+  selectionText: string;
 
   /** Autofill background color */
-  autofill: string
+  autofill: string;
 }
 
 // ============================================================================
@@ -74,25 +74,25 @@ export interface ThemeColors {
  */
 export interface ThemeTypography {
   /** Primary font family for inputs */
-  fontFamily: string
+  fontFamily: string;
   /** Monospace font family for card numbers, CVV */
-  fontFamilyMono: string
+  fontFamilyMono: string;
   /** Base font size */
-  fontSize: string
+  fontSize: string;
   /** Small font size */
-  fontSizeSmall: string
+  fontSizeSmall: string;
   /** Large font size */
-  fontSizeLarge: string
+  fontSizeLarge: string;
   /** Normal font weight */
-  fontWeightNormal: string
+  fontWeightNormal: string;
   /** Medium font weight */
-  fontWeightMedium: string
+  fontWeightMedium: string;
   /** Bold font weight */
-  fontWeightBold: string
+  fontWeightBold: string;
   /** Default line height */
-  lineHeight: string
+  lineHeight: string;
   /** Default letter spacing */
-  letterSpacing: string
+  letterSpacing: string;
 }
 
 // ============================================================================
@@ -104,15 +104,15 @@ export interface ThemeTypography {
  */
 export interface ThemeSpacing {
   /** Extra small spacing (4px) */
-  xs: string
+  xs: string;
   /** Small spacing (8px) */
-  sm: string
+  sm: string;
   /** Medium spacing (12px) */
-  md: string
+  md: string;
   /** Large spacing (16px) */
-  lg: string
+  lg: string;
   /** Extra large spacing (24px) */
-  xl: string
+  xl: string;
 }
 
 /**
@@ -120,15 +120,15 @@ export interface ThemeSpacing {
  */
 export interface ThemeBorders {
   /** Border radius for inputs */
-  radius: string
+  radius: string;
   /** Small border radius */
-  radiusSmall: string
+  radiusSmall: string;
   /** Large border radius */
-  radiusLarge: string
+  radiusLarge: string;
   /** Border width */
-  width: string
+  width: string;
   /** Border style */
-  style: string
+  style: string;
 }
 
 /**
@@ -136,11 +136,11 @@ export interface ThemeBorders {
  */
 export interface ThemeShadows {
   /** Focus ring shadow */
-  focusRing: string
+  focusRing: string;
   /** Input shadow */
-  input: string
+  input: string;
   /** Card/elevated surface shadow */
-  card: string
+  card: string;
 }
 
 // ============================================================================
@@ -153,23 +153,23 @@ export interface ThemeShadows {
  */
 export interface ThemeInputStyles {
   /** Base styles applied to all states */
-  base: SecureElementStyle
+  base: SecureElementStyle;
   /** Styles for empty state */
-  empty?: SecureElementStyle
+  empty?: SecureElementStyle;
   /** Styles for valid state */
-  valid?: SecureElementStyle
+  valid?: SecureElementStyle;
   /** Styles for invalid state */
-  invalid?: SecureElementStyle
+  invalid?: SecureElementStyle;
   /** Styles for hover state */
-  hover?: SecureElementStyle
+  hover?: SecureElementStyle;
   /** Styles for focus state */
-  focus?: SecureElementStyle
+  focus?: SecureElementStyle;
   /** Styles for placeholder */
-  placeholder?: SecureElementStyle
+  placeholder?: SecureElementStyle;
   /** Styles for text selection */
-  selection?: SecureElementStyle
+  selection?: SecureElementStyle;
   /** Styles for autofilled inputs */
-  autofill?: SecureElementStyle
+  autofill?: SecureElementStyle;
 }
 
 /**
@@ -178,13 +178,13 @@ export interface ThemeInputStyles {
  */
 export interface ThemeSpanStyles {
   /** Base styles for display spans */
-  base: SecureElementStyle
+  base: SecureElementStyle;
   /** Styles specific to card numbers */
-  cardNumber?: SecureElementStyle
+  cardNumber?: SecureElementStyle;
   /** Styles specific to CVV */
-  cvv?: SecureElementStyle
+  cvv?: SecureElementStyle;
   /** Styles specific to PIN display */
-  cardPin?: SecureElementStyle
+  cardPin?: SecureElementStyle;
 }
 
 /**
@@ -192,9 +192,9 @@ export interface ThemeSpanStyles {
  */
 export interface ThemeKycStyles {
   /** Custom CSS string to inject into KYC iframe */
-  customCssStr?: string
+  customCssStr?: string;
   /** URL to external CSS file for KYC */
-  customCss?: string
+  customCss?: string;
 }
 
 // ============================================================================
@@ -206,23 +206,23 @@ export interface ThemeKycStyles {
  */
 export interface WeavrTheme {
   /** Theme name for identification */
-  name: string
+  name: string;
   /** Color palette */
-  colors: ThemeColors
+  colors: ThemeColors;
   /** Typography settings */
-  typography: ThemeTypography
+  typography: ThemeTypography;
   /** Spacing values */
-  spacing: ThemeSpacing
+  spacing: ThemeSpacing;
   /** Border configuration */
-  borders: ThemeBorders
+  borders: ThemeBorders;
   /** Shadow configuration */
-  shadows: ThemeShadows
+  shadows: ThemeShadows;
   /** Pre-configured input styles (optional, generated from tokens if not provided) */
-  inputStyles?: ThemeInputStyles
+  inputStyles?: ThemeInputStyles;
   /** Pre-configured span styles (optional, generated from tokens if not provided) */
-  spanStyles?: ThemeSpanStyles
+  spanStyles?: ThemeSpanStyles;
   /** KYC/KYB styles */
-  kycStyles?: ThemeKycStyles
+  kycStyles?: ThemeKycStyles;
 }
 
 // ============================================================================
@@ -295,7 +295,7 @@ export const lightTheme: WeavrTheme = {
     input: 'none',
     card: '0 1px 3px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06)',
   },
-}
+};
 
 /**
  * Dark theme
@@ -363,7 +363,7 @@ export const darkTheme: WeavrTheme = {
     input: 'none',
     card: '0 1px 3px rgba(0, 0, 0, 0.3), 0 1px 2px rgba(0, 0, 0, 0.2)',
   },
-}
+};
 
 // ============================================================================
 // Theme Utilities
@@ -372,11 +372,8 @@ export const darkTheme: WeavrTheme = {
 /**
  * Create a custom theme by extending an existing theme
  */
-export function createTheme(
-  baseTheme: WeavrTheme,
-  overrides: DeepPartial<WeavrTheme>
-): WeavrTheme {
-  return deepMergeTheme(baseTheme, overrides)
+export function createTheme(baseTheme: WeavrTheme, overrides: DeepPartial<WeavrTheme>): WeavrTheme {
+  return deepMergeTheme(baseTheme, overrides);
 }
 
 /**
@@ -385,11 +382,11 @@ export function createTheme(
 export function themeToInputStyles(theme: WeavrTheme): SecureElementStyles {
   // If theme has pre-configured input styles, convert them
   if (theme.inputStyles) {
-    return inputStylesToSecureStyles(theme.inputStyles)
+    return inputStylesToSecureStyles(theme.inputStyles);
   }
 
   // Generate from tokens
-  const { colors, typography, spacing, borders, shadows } = theme
+  const { colors, typography, spacing, borders, shadows } = theme;
 
   return {
     base: {
@@ -435,7 +432,7 @@ export function themeToInputStyles(theme: WeavrTheme): SecureElementStyles {
       color: colors.error,
       borderColor: colors.errorBorder,
     },
-  }
+  };
 }
 
 /**
@@ -447,20 +444,20 @@ export function themeToSpanStyles(
 ): SecureElementStyles {
   // If theme has pre-configured span styles, use them
   if (theme.spanStyles) {
-    const baseStyle = { ...theme.spanStyles.base }
+    const baseStyle = { ...theme.spanStyles.base };
 
     // Merge type-specific styles if available
     if (type && theme.spanStyles[type]) {
-      Object.assign(baseStyle, theme.spanStyles[type])
+      Object.assign(baseStyle, theme.spanStyles[type]);
     }
 
-    return { base: baseStyle }
+    return { base: baseStyle };
   }
 
   // Generate from tokens
-  const { colors, typography } = theme
+  const { colors, typography } = theme;
 
-  const isMonospace = type === 'cardNumber' || type === 'cvv'
+  const isMonospace = type === 'cardNumber' || type === 'cvv';
 
   return {
     base: {
@@ -471,7 +468,7 @@ export function themeToSpanStyles(
       lineHeight: typography.lineHeight,
       letterSpacing: isMonospace ? '1px' : typography.letterSpacing,
     },
-  }
+  };
 }
 
 /**
@@ -480,10 +477,10 @@ export function themeToSpanStyles(
 export function themeToKycCss(theme: WeavrTheme): string {
   // If theme has pre-configured KYC styles, use them
   if (theme.kycStyles?.customCssStr) {
-    return theme.kycStyles.customCssStr
+    return theme.kycStyles.customCssStr;
   }
 
-  const { colors, typography, spacing, borders } = theme
+  const { colors, typography, spacing, borders } = theme;
 
   return `
     .kyc-container {
@@ -540,7 +537,7 @@ export function themeToKycCss(theme: WeavrTheme): string {
       color: ${colors.error};
       font-size: ${typography.fontSizeSmall};
     }
-  `.trim()
+  `.trim();
 }
 
 /**
@@ -550,7 +547,7 @@ export function themeToContainerStyle(
   theme: WeavrTheme,
   variant: 'input' | 'card' | 'surface' = 'input'
 ): React.CSSProperties {
-  const { colors, borders, spacing, shadows } = theme
+  const { colors, borders, spacing, shadows } = theme;
 
   switch (variant) {
     case 'card':
@@ -559,19 +556,19 @@ export function themeToContainerStyle(
         borderRadius: borders.radiusLarge,
         padding: spacing.lg,
         boxShadow: shadows.card,
-      }
+      };
     case 'surface':
       return {
         backgroundColor: colors.surface,
         borderRadius: borders.radius,
         padding: spacing.md,
-      }
+      };
     case 'input':
     default:
       return {
         backgroundColor: colors.inputBackground,
         borderRadius: borders.radius,
-      }
+      };
   }
 }
 
@@ -588,42 +585,39 @@ function inputStylesToSecureStyles(styles: ThemeInputStyles): SecureElementStyle
     empty: styles.empty,
     valid: styles.valid,
     invalid: styles.invalid,
-  }
+  };
 
   // Add pseudo-classes to base
   if (styles.hover) {
-    result.base![':hover'] = styles.hover
+    result.base![':hover'] = styles.hover;
   }
   if (styles.focus) {
-    result.base![':focus'] = styles.focus
+    result.base![':focus'] = styles.focus;
   }
   if (styles.placeholder) {
-    result.base!['::placeholder'] = styles.placeholder
+    result.base!['::placeholder'] = styles.placeholder;
   }
   if (styles.selection) {
-    result.base!['::selection'] = styles.selection
+    result.base!['::selection'] = styles.selection;
   }
   if (styles.autofill) {
-    result.base![':-webkit-autofill'] = styles.autofill
+    result.base![':-webkit-autofill'] = styles.autofill;
   }
 
-  return result
+  return result;
 }
 
 /**
  * Deep partial type utility
  */
 type DeepPartial<T> = {
-  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P]
-}
+  [P in keyof T]?: T[P] extends object ? DeepPartial<T[P]> : T[P];
+};
 
 /**
  * Deep merge utility for themes
  */
-function deepMergeTheme(
-  target: WeavrTheme,
-  source: DeepPartial<WeavrTheme>
-): WeavrTheme {
+function deepMergeTheme(target: WeavrTheme, source: DeepPartial<WeavrTheme>): WeavrTheme {
   const result: WeavrTheme = {
     name: source.name ?? target.name,
     colors: { ...target.colors, ...source.colors },
@@ -631,7 +625,7 @@ function deepMergeTheme(
     spacing: { ...target.spacing, ...source.spacing },
     borders: { ...target.borders, ...source.borders },
     shadows: { ...target.shadows, ...source.shadows },
-  }
+  };
 
   // Handle optional properties
   if (source.inputStyles || target.inputStyles) {
@@ -642,7 +636,7 @@ function deepMergeTheme(
         ...target.inputStyles?.base,
         ...source.inputStyles?.base,
       },
-    }
+    };
   }
 
   if (source.spanStyles || target.spanStyles) {
@@ -653,15 +647,15 @@ function deepMergeTheme(
         ...target.spanStyles?.base,
         ...source.spanStyles?.base,
       },
-    }
+    };
   }
 
   if (source.kycStyles || target.kycStyles) {
     result.kycStyles = {
       ...target.kycStyles,
       ...source.kycStyles,
-    }
+    };
   }
 
-  return result
+  return result;
 }

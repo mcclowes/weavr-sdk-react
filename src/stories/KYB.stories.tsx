@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
-import { WeavrProvider, KYB } from '../index'
-import { weavrConfig } from './config'
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { WeavrProvider, KYB } from '../index';
+import { weavrConfig } from './config';
 
 // Wrapper to provide Weavr context
 function WeavrWrapper({ children }: { children: React.ReactNode }) {
@@ -9,16 +9,16 @@ function WeavrWrapper({ children }: { children: React.ReactNode }) {
     <WeavrProvider uiKey={weavrConfig.uiKey} environment={weavrConfig.environment}>
       {children}
     </WeavrProvider>
-  )
+  );
 }
 
 function KYBDemo() {
-  const [status, setStatus] = useState<string>('Not started')
-  const [events, setEvents] = useState<string[]>([])
+  const [status, setStatus] = useState<string>('Not started');
+  const [events, setEvents] = useState<string[]>([]);
 
   const addEvent = (event: string) => {
-    setEvents((prev) => [...prev, `${new Date().toLocaleTimeString()}: ${event}`])
-  }
+    setEvents((prev) => [...prev, `${new Date().toLocaleTimeString()}: ${event}`]);
+  };
 
   return (
     <div style={{ width: 500, fontFamily: 'system-ui' }}>
@@ -50,32 +50,33 @@ function KYBDemo() {
                   const res = await fetch('/api/simulate-kyb', {
                     method: 'POST',
                     body: JSON.stringify({ corporateId: weavrConfig.corporateId }),
-                  })
-                  if (!res.ok) throw new Error('Verification failed')
+                  });
+                  if (!res.ok) throw new Error('Verification failed');
                 }
               : undefined
           }
           onComplete={(payload) => {
-            setStatus('Completed')
-            addEvent(`KYB completed: ${JSON.stringify(payload)}`)
+            setStatus('Completed');
+            addEvent(`KYB completed: ${JSON.stringify(payload)}`);
           }}
           onClose={(payload) => {
-            setStatus('Closed')
-            addEvent(`KYB closed: ${JSON.stringify(payload)}`)
+            setStatus('Closed');
+            addEvent(`KYB closed: ${JSON.stringify(payload)}`);
           }}
           onError={(payload) => {
-            setStatus('Error')
-            addEvent(`KYB error: ${JSON.stringify(payload)}`)
+            setStatus('Error');
+            addEvent(`KYB error: ${JSON.stringify(payload)}`);
           }}
           onStepChange={(payload) => {
-            addEvent(`Step changed: ${JSON.stringify(payload)}`)
+            addEvent(`Step changed: ${JSON.stringify(payload)}`);
           }}
         />
       </div>
 
       <div style={{ marginTop: 16 }}>
         <div style={{ fontSize: 14, fontWeight: 500, marginBottom: 8 }}>
-          Status: <span style={{ color: status === 'Completed' ? '#28a745' : '#666' }}>{status}</span>
+          Status:{' '}
+          <span style={{ color: status === 'Completed' ? '#28a745' : '#666' }}>{status}</span>
         </div>
         {events.length > 0 && (
           <div>
@@ -103,13 +104,19 @@ function KYBDemo() {
         Note: The KYB flow requires valid authentication tokens from your Weavr API.
       </p>
     </div>
-  )
+  );
 }
 
 const meta: Meta<typeof KYB> = {
   title: 'Components/KYB',
   component: KYB,
-  decorators: [(Story) => <WeavrWrapper><Story /></WeavrWrapper>],
+  decorators: [
+    (Story) => (
+      <WeavrWrapper>
+        <Story />
+      </WeavrWrapper>
+    ),
+  ],
   parameters: {
     layout: 'centered',
     docs: {
@@ -162,14 +169,14 @@ Headers: programme-key: {your-key}, Content-Type: application/json
     onError: { action: 'error' },
     onStepChange: { action: 'stepChange' },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   render: () => <KYBDemo />,
-}
+};
 
 export const Playground: Story = {
   args: {
@@ -200,4 +207,4 @@ export const Playground: Story = {
       </p>
     </div>
   ),
-}
+};

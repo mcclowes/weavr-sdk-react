@@ -1,9 +1,9 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { WeavrProvider, useWeavr } from '../index'
-import { weavrConfig } from './config'
+import type { Meta, StoryObj } from '@storybook/react';
+import { WeavrProvider, useWeavr } from '../index';
+import { weavrConfig } from './config';
 
 function WeavrStatus() {
-  const { isLoading, isInitialized, error } = useWeavr()
+  const { isLoading, isInitialized, error } = useWeavr();
 
   return (
     <div style={{ padding: 20, fontFamily: 'system-ui' }}>
@@ -14,7 +14,7 @@ function WeavrStatus() {
         <li>Error: {error ? error.message : 'None'}</li>
       </ul>
     </div>
-  )
+  );
 }
 
 const meta: Meta<typeof WeavrProvider> = {
@@ -49,10 +49,10 @@ The WeavrProvider initializes the Weavr secure client and makes it available to 
       description: 'Weavr environment',
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
@@ -64,17 +64,19 @@ export const Default: Story = {
       <WeavrStatus />
     </WeavrProvider>
   ),
-}
+};
 
 export const WithFonts: Story = {
   args: {
     uiKey: weavrConfig.uiKey,
     environment: weavrConfig.environment,
-    fonts: [{ cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap' }],
+    fonts: [
+      { cssSrc: 'https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap' },
+    ],
   },
   render: (args) => (
     <WeavrProvider uiKey={args.uiKey!} environment={args.environment} fonts={args.fonts}>
       <WeavrStatus />
     </WeavrProvider>
   ),
-}
+};

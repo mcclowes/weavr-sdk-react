@@ -5,14 +5,7 @@
  * Can be used standalone or alongside WeavrProvider.
  */
 
-import {
-  createContext,
-  useContext,
-  useState,
-  useCallback,
-  useMemo,
-  type ReactNode,
-} from 'react'
+import { createContext, useContext, useState, useCallback, useMemo, type ReactNode } from 'react';
 import type {
   WeavrTheme,
   ThemeColors,
@@ -20,7 +13,7 @@ import type {
   ThemeSpacing,
   ThemeBorders,
   ThemeShadows,
-} from './theme'
+} from './theme';
 import {
   lightTheme,
   darkTheme,
@@ -29,8 +22,8 @@ import {
   themeToSpanStyles,
   themeToKycCss,
   themeToContainerStyle,
-} from './theme'
-import type { SecureElementStyles } from './types'
+} from './theme';
+import type { SecureElementStyles } from './types';
 
 // ============================================================================
 // Context Types
@@ -38,50 +31,50 @@ import type { SecureElementStyles } from './types'
 
 export interface WeavrThemeContextValue {
   /** Current active theme */
-  theme: WeavrTheme
+  theme: WeavrTheme;
   /** Theme name */
-  themeName: string
+  themeName: string;
   /** Whether dark mode is active */
-  isDark: boolean
+  isDark: boolean;
 
   // Direct access to theme tokens
-  colors: ThemeColors
-  typography: ThemeTypography
-  spacing: ThemeSpacing
-  borders: ThemeBorders
-  shadows: ThemeShadows
+  colors: ThemeColors;
+  typography: ThemeTypography;
+  spacing: ThemeSpacing;
+  borders: ThemeBorders;
+  shadows: ThemeShadows;
 
   // Style getters (pre-computed for performance)
   /** Get Weavr-compatible input styles */
-  getInputStyles: () => SecureElementStyles
+  getInputStyles: () => SecureElementStyles;
   /** Get Weavr-compatible span styles for a specific type */
-  getSpanStyles: (type?: 'cardNumber' | 'cvv' | 'cardPin') => SecureElementStyles
+  getSpanStyles: (type?: 'cardNumber' | 'cvv' | 'cardPin') => SecureElementStyles;
   /** Get CSS string for KYC/KYB components */
-  getKycCss: () => string
+  getKycCss: () => string;
   /** Get React CSSProperties for containers */
-  getContainerStyle: (variant?: 'input' | 'card' | 'surface') => React.CSSProperties
+  getContainerStyle: (variant?: 'input' | 'card' | 'surface') => React.CSSProperties;
 
   // Theme switching
   /** Switch to a different theme */
-  setTheme: (theme: WeavrTheme) => void
+  setTheme: (theme: WeavrTheme) => void;
   /** Toggle between light and dark themes */
-  toggleDarkMode: () => void
+  toggleDarkMode: () => void;
 }
 
-const WeavrThemeContext = createContext<WeavrThemeContextValue | null>(null)
+const WeavrThemeContext = createContext<WeavrThemeContextValue | null>(null);
 
 // ============================================================================
 // Provider Component
 // ============================================================================
 
 export interface WeavrThemeProviderProps {
-  children: ReactNode
+  children: ReactNode;
   /** Initial theme (defaults to lightTheme) */
-  theme?: WeavrTheme
+  theme?: WeavrTheme;
   /** Custom light theme for dark mode toggle */
-  lightTheme?: WeavrTheme
+  lightTheme?: WeavrTheme;
   /** Custom dark theme for dark mode toggle */
-  darkTheme?: WeavrTheme
+  darkTheme?: WeavrTheme;
 }
 
 export function WeavrThemeProvider({
@@ -90,35 +83,33 @@ export function WeavrThemeProvider({
   lightTheme: customLightTheme,
   darkTheme: customDarkTheme,
 }: WeavrThemeProviderProps) {
-  const light = customLightTheme ?? lightTheme
-  const dark = customDarkTheme ?? darkTheme
-  const [currentTheme, setCurrentTheme] = useState<WeavrTheme>(initialTheme ?? light)
+  const light = customLightTheme ?? lightTheme;
+  const dark = customDarkTheme ?? darkTheme;
+  const [currentTheme, setCurrentTheme] = useState<WeavrTheme>(initialTheme ?? light);
 
-  const isDark = currentTheme.name === 'dark' || currentTheme.name.includes('dark')
+  const isDark = currentTheme.name === 'dark' || currentTheme.name.includes('dark');
 
   const toggleDarkMode = useCallback(() => {
-    setCurrentTheme((current) =>
-      current.name === dark.name ? light : dark
-    )
-  }, [light, dark])
+    setCurrentTheme((current) => (current.name === dark.name ? light : dark));
+  }, [light, dark]);
 
   // Pre-compute styles for performance
-  const inputStyles = useMemo(() => themeToInputStyles(currentTheme), [currentTheme])
-  const kycCss = useMemo(() => themeToKycCss(currentTheme), [currentTheme])
+  const inputStyles = useMemo(() => themeToInputStyles(currentTheme), [currentTheme]);
+  const kycCss = useMemo(() => themeToKycCss(currentTheme), [currentTheme]);
 
-  const getInputStyles = useCallback(() => inputStyles, [inputStyles])
+  const getInputStyles = useCallback(() => inputStyles, [inputStyles]);
 
   const getSpanStyles = useCallback(
     (type?: 'cardNumber' | 'cvv' | 'cardPin') => themeToSpanStyles(currentTheme, type),
     [currentTheme]
-  )
+  );
 
-  const getKycCss = useCallback(() => kycCss, [kycCss])
+  const getKycCss = useCallback(() => kycCss, [kycCss]);
 
   const getContainerStyle = useCallback(
     (variant?: 'input' | 'card' | 'surface') => themeToContainerStyle(currentTheme, variant),
     [currentTheme]
-  )
+  );
 
   const value = useMemo<WeavrThemeContextValue>(
     () => ({
@@ -146,13 +137,9 @@ export function WeavrThemeProvider({
       getContainerStyle,
       toggleDarkMode,
     ]
-  )
+  );
 
-  return (
-    <WeavrThemeContext.Provider value={value}>
-      {children}
-    </WeavrThemeContext.Provider>
-  )
+  return <WeavrThemeContext.Provider value={value}>{children}</WeavrThemeContext.Provider>;
 }
 
 // ============================================================================
@@ -164,11 +151,11 @@ export function WeavrThemeProvider({
  * @throws Error if used outside WeavrThemeProvider
  */
 export function useWeavrTheme(): WeavrThemeContextValue {
-  const context = useContext(WeavrThemeContext)
+  const context = useContext(WeavrThemeContext);
   if (!context) {
-    throw new Error('useWeavrTheme must be used within a WeavrThemeProvider')
+    throw new Error('useWeavrTheme must be used within a WeavrThemeProvider');
   }
-  return context
+  return context;
 }
 
 /**
@@ -176,7 +163,7 @@ export function useWeavrTheme(): WeavrThemeContextValue {
  * Useful for components that optionally support theming
  */
 export function useOptionalWeavrTheme(): WeavrThemeContextValue | null {
-  return useContext(WeavrThemeContext)
+  return useContext(WeavrThemeContext);
 }
 
 /**
@@ -185,13 +172,13 @@ export function useOptionalWeavrTheme(): WeavrThemeContextValue | null {
 export function useThemedInputStyles(
   overrides?: Partial<SecureElementStyles>
 ): SecureElementStyles {
-  const themeContext = useOptionalWeavrTheme()
+  const themeContext = useOptionalWeavrTheme();
 
   return useMemo(() => {
-    const baseStyles = themeContext?.getInputStyles() ?? themeToInputStyles(lightTheme)
+    const baseStyles = themeContext?.getInputStyles() ?? themeToInputStyles(lightTheme);
 
     if (!overrides) {
-      return baseStyles
+      return baseStyles;
     }
 
     // Merge overrides
@@ -200,8 +187,8 @@ export function useThemedInputStyles(
       empty: { ...baseStyles.empty, ...overrides.empty },
       valid: { ...baseStyles.valid, ...overrides.valid },
       invalid: { ...baseStyles.invalid, ...overrides.invalid },
-    }
-  }, [themeContext, overrides])
+    };
+  }, [themeContext, overrides]);
 }
 
 /**
@@ -211,32 +198,31 @@ export function useThemedSpanStyles(
   type?: 'cardNumber' | 'cvv' | 'cardPin',
   overrides?: Partial<SecureElementStyles>
 ): SecureElementStyles {
-  const themeContext = useOptionalWeavrTheme()
+  const themeContext = useOptionalWeavrTheme();
 
   return useMemo(() => {
-    const baseStyles =
-      themeContext?.getSpanStyles(type) ?? themeToSpanStyles(lightTheme, type)
+    const baseStyles = themeContext?.getSpanStyles(type) ?? themeToSpanStyles(lightTheme, type);
 
     if (!overrides) {
-      return baseStyles
+      return baseStyles;
     }
 
     return {
       base: { ...baseStyles.base, ...overrides.base },
-    }
-  }, [themeContext, type, overrides])
+    };
+  }, [themeContext, type, overrides]);
 }
 
 /**
  * Hook to get KYC/KYB CSS string
  */
 export function useThemedKycCss(additionalCss?: string): string {
-  const themeContext = useOptionalWeavrTheme()
+  const themeContext = useOptionalWeavrTheme();
 
   return useMemo(() => {
-    const baseCss = themeContext?.getKycCss() ?? themeToKycCss(lightTheme)
-    return additionalCss ? `${baseCss}\n${additionalCss}` : baseCss
-  }, [themeContext, additionalCss])
+    const baseCss = themeContext?.getKycCss() ?? themeToKycCss(lightTheme);
+    return additionalCss ? `${baseCss}\n${additionalCss}` : baseCss;
+  }, [themeContext, additionalCss]);
 }
 
 // ============================================================================
@@ -247,23 +233,23 @@ export function useThemedKycCss(additionalCss?: string): string {
  * Props for the combined Weavr + Theme provider
  */
 export interface WeavrWithThemeProviderProps {
-  children: ReactNode
+  children: ReactNode;
   /** Weavr UI Key */
-  uiKey: string
+  uiKey: string;
   /** Environment (sandbox or production) */
-  environment?: 'sandbox' | 'production'
+  environment?: 'sandbox' | 'production';
   /** Custom script URL */
-  customScriptUrl?: string
+  customScriptUrl?: string;
   /** Font options for Weavr */
-  fonts?: Array<{ cssSrc?: string }>
+  fonts?: Array<{ cssSrc?: string }>;
   /** Theme configuration */
-  theme?: WeavrTheme
+  theme?: WeavrTheme;
   /** Custom light theme */
-  lightTheme?: WeavrTheme
+  lightTheme?: WeavrTheme;
   /** Custom dark theme */
-  darkTheme?: WeavrTheme
+  darkTheme?: WeavrTheme;
 }
 
 // Note: The combined provider component is exported from index.ts
 // to avoid circular dependencies with the WeavrProvider
-export { createTheme, lightTheme, darkTheme }
+export { createTheme, lightTheme, darkTheme };

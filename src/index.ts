@@ -7,7 +7,7 @@ export {
   setUserToken,
   type WeavrEnvironment,
   type WeavrInitConfig,
-} from './client'
+} from './client';
 
 // React context and provider
 export {
@@ -16,7 +16,7 @@ export {
   useWeavrClient,
   type WeavrContextValue,
   type WeavrProviderProps,
-} from './context'
+} from './context';
 
 // React hooks
 export {
@@ -28,7 +28,7 @@ export {
   type UseAssociateReturn,
   type UseSetUserTokenReturn,
   type UseAssociatedClientReturn,
-} from './hooks'
+} from './hooks';
 
 // React components
 export {
@@ -44,7 +44,7 @@ export {
   type KYBProps,
   type KYCProps,
   type ConsumerKYCProps,
-} from './components'
+} from './components';
 
 // Theme system
 export {
@@ -68,7 +68,7 @@ export {
   type ThemeInputStyles,
   type ThemeSpanStyles,
   type ThemeKycStyles,
-} from './theme'
+} from './theme';
 
 // Theme context and hooks
 export {
@@ -80,7 +80,7 @@ export {
   useThemedKycCss,
   type WeavrThemeContextValue,
   type WeavrThemeProviderProps,
-} from './themeContext'
+} from './themeContext';
 
 // Types
 export type {
@@ -108,4 +108,4 @@ export type {
   KYCMessageType,
   ConsumerKYCOptions,
   ConsumerKYCMessage,
-} from './types'
+} from './types';

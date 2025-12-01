@@ -1,7 +1,7 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
-import { WeavrProvider, SecureSpan, useAssociate } from '../index'
-import { weavrConfig } from './config'
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { WeavrProvider, SecureSpan, useAssociate } from '../index';
+import { weavrConfig } from './config';
 
 // Wrapper to provide Weavr context
 function WeavrWrapper({ children }: { children: React.ReactNode }) {
@@ -9,23 +9,23 @@ function WeavrWrapper({ children }: { children: React.ReactNode }) {
     <WeavrProvider uiKey={weavrConfig.uiKey} environment={weavrConfig.environment}>
       {children}
     </WeavrProvider>
-  )
+  );
 }
 
 // Demo component showing card details display
 function CardDisplayDemo() {
-  const { associate, isAssociating, isAssociated, error } = useAssociate()
-  const [showDetails, setShowDetails] = useState(false)
+  const { associate, isAssociating, isAssociated, error } = useAssociate();
+  const [showDetails, setShowDetails] = useState(false);
 
   const handleAssociate = async () => {
     try {
       // In a real app, this would be your user's auth token
-      await associate('Bearer user-auth-token')
-      setShowDetails(true)
+      await associate('Bearer user-auth-token');
+      setShowDetails(true);
     } catch (e) {
-      console.error('Association failed:', e)
+      console.error('Association failed:', e);
     }
-  }
+  };
 
   return (
     <div style={{ width: 350, fontFamily: 'system-ui' }}>
@@ -133,13 +133,19 @@ function CardDisplayDemo() {
         In sandbox, association will fail with placeholder tokens.
       </p>
     </div>
-  )
+  );
 }
 
 const meta: Meta<typeof SecureSpan> = {
   title: 'Components/SecureSpan',
   component: SecureSpan,
-  decorators: [(Story) => <WeavrWrapper><Story /></WeavrWrapper>],
+  decorators: [
+    (Story) => (
+      <WeavrWrapper>
+        <Story />
+      </WeavrWrapper>
+    ),
+  ],
   parameters: {
     layout: 'centered',
     docs: {
@@ -182,14 +188,14 @@ SecureSpan displays sensitive card data (card number, CVV, PIN) in a secure ifra
     onReady: { action: 'ready' },
     onChange: { action: 'change' },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const CardDetails: Story = {
   render: () => <CardDisplayDemo />,
-}
+};
 
 export const CardNumber: Story = {
   args: {
@@ -213,7 +219,7 @@ export const CardNumber: Story = {
       />
     </div>
   ),
-}
+};
 
 export const CVV: Story = {
   args: {
@@ -236,7 +242,7 @@ export const CVV: Story = {
       />
     </div>
   ),
-}
+};
 
 export const Playground: Story = {
   args: {
@@ -266,9 +272,9 @@ export const Playground: Story = {
         onChange={args.onChange}
       />
       <p style={{ marginTop: 16, fontSize: 12, color: '#666' }}>
-        Use the Controls panel to modify type, token, and styling.
-        Requires user association and valid card tokens.
+        Use the Controls panel to modify type, token, and styling. Requires user association and
+        valid card tokens.
       </p>
     </div>
   ),
-}
+};

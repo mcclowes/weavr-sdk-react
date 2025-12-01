@@ -1,29 +1,29 @@
-import { useRef, useEffect, useMemo } from 'react'
-import type { ConsumerKYCMessage } from '../types'
-import { useAssociatedClient } from '../hooks/useAssociatedClient'
-import { useOptionalWeavrTheme } from '../themeContext'
+import { useRef, useEffect, useMemo } from 'react';
+import type { ConsumerKYCMessage } from '../types';
+import { useAssociatedClient } from '../hooks/useAssociatedClient';
+import { useOptionalWeavrTheme } from '../themeContext';
 
 export interface ConsumerKYCProps {
   /** KYC reference from the API */
-  reference: string
+  reference: string;
   /** User's access token for authentication */
-  accessToken: string
+  accessToken: string;
   /** Language code (ISO 639-1) */
-  lang?: string
+  lang?: string;
   /** URL to custom CSS file */
-  customCss?: string
+  customCss?: string;
   /** Inline custom CSS string */
-  customCssStr?: string
+  customCssStr?: string;
   /** CSS class name for the container div */
-  className?: string
+  className?: string;
   /** Inline styles for the container div */
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
   /** Whether to use theme styles (default: true if theme provider exists) */
-  useTheme?: boolean
+  useTheme?: boolean;
   /** Called when KYC status changes (e.g., kycSubmitted) */
-  onMessage?: (message: ConsumerKYCMessage) => void
+  onMessage?: (message: ConsumerKYCMessage) => void;
   /** Called on error */
-  onError?: (error: Error) => void
+  onError?: (error: Error) => void;
 }
 
 export function ConsumerKYC({
@@ -38,33 +38,33 @@ export function ConsumerKYC({
   onMessage,
   onError,
 }: ConsumerKYCProps) {
-  const { client, isAssociated, error: associateError } = useAssociatedClient(accessToken)
-  const themeContext = useOptionalWeavrTheme()
-  const containerRef = useRef<HTMLDivElement>(null)
-  const initializedRef = useRef(false)
+  const { client, isAssociated, error: associateError } = useAssociatedClient(accessToken);
+  const themeContext = useOptionalWeavrTheme();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const initializedRef = useRef(false);
 
   // Merge theme CSS with custom CSS
   const mergedCustomCssStr = useMemo(() => {
     // Apply theme CSS if available and useTheme is true
-    const shouldUseTheme = useTheme && themeContext
+    const shouldUseTheme = useTheme && themeContext;
     if (shouldUseTheme) {
-      const themeCss = themeContext.getKycCss()
+      const themeCss = themeContext.getKycCss();
       // Merge: theme CSS first, then user's custom CSS
-      return customCssStr ? `${themeCss}\n${customCssStr}` : themeCss
+      return customCssStr ? `${themeCss}\n${customCssStr}` : themeCss;
     }
-    return customCssStr
-  }, [useTheme, themeContext, customCssStr])
+    return customCssStr;
+  }, [useTheme, themeContext, customCssStr]);
 
   // Report association errors
   useEffect(() => {
     if (associateError) {
-      onError?.(associateError)
+      onError?.(associateError);
     }
-  }, [associateError, onError])
+  }, [associateError, onError]);
 
   // Initialize Consumer KYC once associated
   useEffect(() => {
-    if (!containerRef.current || !client || !isAssociated || initializedRef.current) return
+    if (!containerRef.current || !client || !isAssociated || initializedRef.current) return;
 
     try {
       client.consumer_kyc().init({
@@ -75,19 +75,19 @@ export function ConsumerKYC({
         customCssStr: mergedCustomCssStr,
         onMessage,
         onError,
-      })
-      initializedRef.current = true
+      });
+      initializedRef.current = true;
     } catch (error) {
-      onError?.(error instanceof Error ? error : new Error('Failed to initialize Consumer KYC'))
+      onError?.(error instanceof Error ? error : new Error('Failed to initialize Consumer KYC'));
     }
-  }, [client, isAssociated, reference, lang, customCss, mergedCustomCssStr, onMessage, onError])
+  }, [client, isAssociated, reference, lang, customCss, mergedCustomCssStr, onMessage, onError]);
 
   if (associateError) {
     return (
       <div className={className} style={style}>
         Authentication failed: {associateError.message}
       </div>
-    )
+    );
   }
 
   if (!isAssociated) {
@@ -95,8 +95,8 @@ export function ConsumerKYC({
       <div className={className} style={style}>
         Loading KYC...
       </div>
-    )
+    );
   }
 
-  return <div ref={containerRef} className={className} style={style} />
+  return <div ref={containerRef} className={className} style={style} />;
 }

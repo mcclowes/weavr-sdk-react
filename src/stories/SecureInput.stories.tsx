@@ -1,8 +1,8 @@
-import type { Meta, StoryObj } from '@storybook/react'
-import { useState } from 'react'
-import { WeavrProvider, SecureInput } from '../index'
-import type { SecureInputChangeEvent, SecureInputStrengthEvent } from '../types'
-import { weavrConfig } from './config'
+import type { Meta, StoryObj } from '@storybook/react';
+import { useState } from 'react';
+import { WeavrProvider, SecureInput } from '../index';
+import type { SecureInputChangeEvent, SecureInputStrengthEvent } from '../types';
+import { weavrConfig } from './config';
 
 // Wrapper to provide Weavr context
 function WeavrWrapper({ children }: { children: React.ReactNode }) {
@@ -10,7 +10,7 @@ function WeavrWrapper({ children }: { children: React.ReactNode }) {
     <WeavrProvider uiKey={weavrConfig.uiKey} environment={weavrConfig.environment}>
       {children}
     </WeavrProvider>
-  )
+  );
 }
 
 // Demo component showing SecureInput with state
@@ -19,31 +19,36 @@ function SecureInputDemo({
   placeholder,
   showStrength,
 }: {
-  type: 'password' | 'confirmPassword' | 'passCode' | 'confirmPassCode' | 'cardPin'
-  placeholder: string
-  showStrength?: boolean
+  type: 'password' | 'confirmPassword' | 'passCode' | 'confirmPassCode' | 'cardPin';
+  placeholder: string;
+  showStrength?: boolean;
 }) {
   const [state, setState] = useState({
     empty: true,
     valid: false,
     strength: '',
-  })
+  });
 
   const handleChange = (data: SecureInputChangeEvent) => {
-    setState((prev) => ({ ...prev, empty: data.empty, valid: data.valid }))
-  }
+    setState((prev) => ({ ...prev, empty: data.empty, valid: data.valid }));
+  };
 
   const handleStrength = (data: SecureInputStrengthEvent) => {
-    setState((prev) => ({ ...prev, strength: data.strength }))
-  }
+    setState((prev) => ({ ...prev, strength: data.strength }));
+  };
 
   return (
     <div style={{ width: 320, fontFamily: 'system-ui' }}>
       <label style={{ display: 'block', marginBottom: 8, fontWeight: 500 }}>
-        {type === 'password' ? 'Password' :
-         type === 'confirmPassword' ? 'Confirm Password' :
-         type === 'passCode' ? 'Passcode' :
-         type === 'confirmPassCode' ? 'Confirm Passcode' : 'Card PIN'}
+        {type === 'password'
+          ? 'Password'
+          : type === 'confirmPassword'
+            ? 'Confirm Password'
+            : type === 'passCode'
+              ? 'Passcode'
+              : type === 'confirmPassCode'
+                ? 'Confirm Passcode'
+                : 'Card PIN'}
       </label>
       <SecureInput
         name={type}
@@ -83,8 +88,8 @@ function SecureInputDemo({
                   state.strength === 'strong'
                     ? '#28a745'
                     : state.strength === 'fair'
-                    ? '#ffc107'
-                    : '#dc3545',
+                      ? '#ffc107'
+                      : '#dc3545',
               }}
             >
               {state.strength}
@@ -93,13 +98,19 @@ function SecureInputDemo({
         )}
       </div>
     </div>
-  )
+  );
 }
 
 const meta: Meta<typeof SecureInput> = {
   title: 'Components/SecureInput',
   component: SecureInput,
-  decorators: [(Story) => <WeavrWrapper><Story /></WeavrWrapper>],
+  decorators: [
+    (Story) => (
+      <WeavrWrapper>
+        <Story />
+      </WeavrWrapper>
+    ),
+  ],
   parameters: {
     layout: 'centered',
     docs: {
@@ -143,30 +154,30 @@ The actual input value never touches your JavaScript - it's captured directly by
       description: 'Input options including placeholder, maxlength, and styles',
     },
   },
-}
+};
 
-export default meta
-type Story = StoryObj<typeof meta>
+export default meta;
+type Story = StoryObj<typeof meta>;
 
 export const Password: Story = {
   render: () => <SecureInputDemo type="password" placeholder="Enter password" showStrength />,
-}
+};
 
 export const ConfirmPassword: Story = {
   render: () => <SecureInputDemo type="confirmPassword" placeholder="Confirm password" />,
-}
+};
 
 export const PassCode: Story = {
   render: () => <SecureInputDemo type="passCode" placeholder="Enter passcode" />,
-}
+};
 
 export const ConfirmPassCode: Story = {
   render: () => <SecureInputDemo type="confirmPassCode" placeholder="Confirm passcode" />,
-}
+};
 
 export const CardPIN: Story = {
   render: () => <SecureInputDemo type="cardPin" placeholder="Enter PIN" />,
-}
+};
 
 // Note: Passcode and CardPIN require specific SDK configurations:
 // - Passcode may not be supported in all environments
@@ -210,4 +221,4 @@ export const Playground: Story = {
       </p>
     </div>
   ),
-}
+};

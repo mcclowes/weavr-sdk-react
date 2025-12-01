@@ -1,4 +1,4 @@
-import { vi } from 'vitest'
+import { vi } from 'vitest';
 
 // Mock the Weavr client
 const mockSecureInput = {
@@ -12,7 +12,7 @@ const mockSecureInput = {
   focus: vi.fn(),
   blur: vi.fn(),
   clear: vi.fn(),
-}
+};
 
 const mockSecureSpan = {
   mount: vi.fn(),
@@ -22,18 +22,22 @@ const mockSecureSpan = {
   off: vi.fn(),
   addListener: vi.fn(),
   removeListener: vi.fn(),
-}
+};
 
 const mockForm = {
   input: vi.fn(() => mockSecureInput),
   tokenize: vi.fn((cb) => cb({ password: 'tokenized-value' })),
   destroy: vi.fn(),
-}
+};
 
 export const mockWeavrClient = {
   init: vi.fn(),
-  associate: vi.fn((_token: string, onSuccess: () => void, _onError: (e: Error) => void) => onSuccess()),
-  setUserToken: vi.fn((_token: string, onSuccess: () => void, _onError: (e: Error) => void) => onSuccess()),
+  associate: vi.fn((_token: string, onSuccess: () => void, _onError: (e: Error) => void) =>
+    onSuccess()
+  ),
+  setUserToken: vi.fn((_token: string, onSuccess: () => void, _onError: (e: Error) => void) =>
+    onSuccess()
+  ),
   form: vi.fn(() => mockForm),
   kyb: vi.fn(() => ({
     init: vi.fn(),
@@ -55,12 +59,12 @@ export const mockWeavrClient = {
     passcode: vi.fn(() => mockSecureInput),
     cardPin: vi.fn(() => mockSecureInput),
   },
-}
+};
 
 // Mock window.OpcUxSecureClient
 Object.defineProperty(window, 'OpcUxSecureClient', {
   value: mockWeavrClient,
   writable: true,
-})
+});
 
-export { mockSecureInput, mockSecureSpan, mockForm }
+export { mockSecureInput, mockSecureSpan, mockForm };
