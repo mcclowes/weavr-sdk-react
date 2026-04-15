@@ -1,0 +1,45 @@
+{
+  "version": 1,
+  "skills": {
+    "weavr-api": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "ef032f56102aef3fa2262bf4d61e122fdd8300e1a6534194e6f043ad6b0c3078"
+    },
+    "weavr-components": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "1b8f188e5f9aadec48b440022ea44a2248ba98c57389b6cf0cd3e1736ccc880b"
+    },
+    "weavr-glossary": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "89d815ff0112b774c03455a1d2489c3546341de64fbdc48261f06a7fccc3dc06"
+    },
+    "weavr-sdk-android": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "a9b43a5d804fff73334137dcc02764b863f633b3db0319c6fabfcc0fb9d7452d"
+    },
+    "weavr-sdk-ios": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "55b62eb8fc692e41b2fe0eb8f127353eb8f5fb4cb26e0884db7d723cd3bdda16"
+    },
+    "weavr-sdk-react-native": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "9d68dc21e9a95d103f28ecef9cd8defd28a8fc769bfd9cfb48db28c0896d2fba"
+    },
+    "weavr-sdk-web": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "ba6965c2539a466272fe62b001e3e6b5599980f1c5af4140f75fc5ff64a708ca"
+    },
+    "weavr-simulator": {
+      "source": "weavr-io/skills",
+      "sourceType": "github",
+      "computedHash": "2b2a353c5c1d2268563a9bea74f4e21479746060e19504d44ae9a8dc0d35aa7e"
+    }
+  }
+}
