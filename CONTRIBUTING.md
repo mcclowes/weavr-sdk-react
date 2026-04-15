@@ -1,4 +1,4 @@
-# Contributing to @weavr/react-sdk
+# Contributing to weavr-sdk-react
 
 Thank you for your interest in contributing to the Weavr React SDK! This document provides guidelines and instructions for contributing.
 
@@ -24,7 +24,7 @@ By participating in this project, you agree to maintain a respectful and inclusi
 2. Clone your fork locally
 3. Add the upstream repository as a remote:
    ```bash
-   git remote add upstream https://github.com/weavr-io/weavr-sdk-react.git
+   git remote add upstream https://github.com/mcclowes/weavr-sdk-react.git
    ```
 
 ## Development Setup

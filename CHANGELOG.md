@@ -19,7 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- Initial release of @weavr/react-sdk
+- Initial release of weavr-sdk-react
 - **Components**
   - `SecureInput` - Secure iframe-based input for sensitive data (passwords, PINs, card details)
   - `SecureSpan` - Secure display component for masked card information
@@ -46,5 +46,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for sandbox and production environments
 - Dual module distribution (CommonJS + ESM)
 
-[Unreleased]: https://github.com/weavr-io/weavr-sdk-react/compare/v0.1.0...HEAD
-[0.1.0]: https://github.com/weavr-io/weavr-sdk-react/releases/tag/v0.1.0
+[Unreleased]: https://github.com/mcclowes/weavr-sdk-react/compare/v0.1.0...HEAD
+[0.1.0]: https://github.com/mcclowes/weavr-sdk-react/releases/tag/v0.1.0

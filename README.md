@@ -1,21 +1,21 @@
-# @weavr/react-sdk
+# weavr-sdk-react
 
 React wrapper for Weavr's secure UI components for payments, identity verification, and sensitive data handling.
 
 ## Installation
 
 ```bash
-npm install @weavr/react-sdk
+npm install weavr-sdk-react
 # or
-yarn add @weavr/react-sdk
+yarn add weavr-sdk-react
 ```
 
-**Peer Dependencies:** React >= 17.0.0
+**Peer Dependencies:** React >= 17.0.0, React DOM >= 17.0.0
 
 ## Quick Start
 
 ```tsx
-import { WeavrProvider, SecureInput, useSecureForm } from '@weavr/react-sdk'
+import { WeavrProvider, SecureInput, useSecureForm } from 'weavr-sdk-react'
 
 function App() {
   return (
@@ -97,7 +97,7 @@ const { client, isLoading, error, isInitialized } = useWeavr()
 Capture sensitive data securely via iframe.
 
 ```tsx
-import { SecureInput } from '@weavr/react-sdk'
+import { SecureInput } from 'weavr-sdk-react'
 
 <SecureInput
   name="password"
@@ -134,7 +134,7 @@ import { SecureInput } from '@weavr/react-sdk'
 **Ref Methods:**
 
 ```tsx
-const inputRef = useRef<SecureInputHandle>(null)
+const inputRef = useRef<SecureInputRef>(null)
 
 inputRef.current?.focus()
 inputRef.current?.blur()
@@ -149,7 +149,7 @@ const token = await inputRef.current?.tokenize()
 Display sensitive card data securely. **Requires user association first.**
 
 ```tsx
-import { SecureSpan, useAssociate } from '@weavr/react-sdk'
+import { SecureSpan, useAssociate } from 'weavr-sdk-react'
 
 function CardDisplay({ cardToken }: { cardToken: string }) {
   const { associate, isAssociated } = useAssociate()
@@ -183,7 +183,7 @@ function CardDisplay({ cardToken }: { cardToken: string }) {
 Corporate identity verification flow.
 
 ```tsx
-import { KYB } from '@weavr/react-sdk'
+import { KYB } from 'weavr-sdk-react'
 
 <KYB
   auth={{ accessToken: 'Bearer token' }}
@@ -218,7 +218,7 @@ In sandbox mode, a "Verify Manually" button appears for testing without real doc
 Individual identity verification flow.
 
 ```tsx
-import { KYC } from '@weavr/react-sdk'
+import { KYC } from 'weavr-sdk-react'
 
 <KYC
   auth={{ accessToken: 'Bearer token' }}
@@ -241,12 +241,13 @@ Same props as KYB.
 Simplified KYC for consumer applications.
 
 ```tsx
-import { ConsumerKYC } from '@weavr/react-sdk'
+import { ConsumerKYC } from 'weavr-sdk-react'
 
 <ConsumerKYC
   reference="unique-reference-id"
   accessToken="Bearer token"
-  options={{ language: 'en' }}
+  lang="en"
+  customCss="https://example.com/kyc-styles.css"
   onMessage={(msg) => {
     if (msg.type === 'kycApproved') {
       // Handle approval
@@ -270,14 +271,14 @@ import { ConsumerKYC } from '@weavr/react-sdk'
 Create and manage multiple secure inputs as a form.
 
 ```tsx
-import { useSecureForm } from '@weavr/react-sdk'
+import { useSecureForm } from 'weavr-sdk-react'
 
 function PaymentForm() {
   const { form, createInput, tokenize, destroy, isReady } = useSecureForm()
 
   useEffect(() => {
     // Programmatically create inputs
-    createInput('cardPin', { type: 'cardPin', placeholder: 'PIN' })
+    createInput('cardPin', 'cardPin', { placeholder: 'PIN' })
 
     return () => destroy()
   }, [])
@@ -304,7 +305,7 @@ function PaymentForm() {
 Manually associate user tokens for stepped-up authentication.
 
 ```tsx
-import { useAssociate } from '@weavr/react-sdk'
+import { useAssociate } from 'weavr-sdk-react'
 
 const { associate, isAssociating, isAssociated, error } = useAssociate()
 
@@ -319,7 +320,7 @@ await associate('Bearer user-access-token')
 Alternative to `useAssociate` for setting tokens.
 
 ```tsx
-import { useSetUserToken } from '@weavr/react-sdk'
+import { useSetUserToken } from 'weavr-sdk-react'
 
 const { setToken, isSettingToken, isTokenSet, error } = useSetUserToken()
 
@@ -333,7 +334,7 @@ await setToken('user-access-token') // Bearer prefix added automatically
 Combines client access with automatic token association. Used internally by KYC/KYB components.
 
 ```tsx
-import { useAssociatedClient } from '@weavr/react-sdk'
+import { useAssociatedClient } from 'weavr-sdk-react'
 
 const { client, isAssociated, isAssociating, error } = useAssociatedClient(accessToken)
 ```
@@ -389,6 +390,24 @@ Secure elements accept a `style` prop using Weavr's styling API:
 
 ---
 
+## Theming
+
+Apply consistent styling across all secure elements via `WeavrThemeProvider`:
+
+```tsx
+import { WeavrThemeProvider, lightTheme, darkTheme, createTheme } from 'weavr-sdk-react'
+
+<WeavrProvider uiKey="your-ui-key">
+  <WeavrThemeProvider theme={darkTheme}>
+    <App />
+  </WeavrThemeProvider>
+</WeavrProvider>
+```
+
+Themes expose `colors`, `typography`, `spacing`, `borders`, and `shadows`. Use `createTheme(overrides)` to extend a base theme, or the `useThemedInputStyles` / `useThemedSpanStyles` / `useThemedKycCss` hooks to read derived styles inside custom components.
+
+---
+
 ## Standalone Client Functions
 
 For advanced use cases outside React components:
@@ -399,7 +418,7 @@ import {
   getWeavrClient,
   associateUserToken,
   loadWeavrClient
-} from '@weavr/react-sdk'
+} from 'weavr-sdk-react'
 
 // Initialize manually (usually done by WeavrProvider)
 await initWeavr({ uiKey: 'your-key', environment: 'sandbox' })
@@ -426,7 +445,7 @@ import type {
   SecureInputStrengthEvent,
   KYBConfig,
   KYCConfig,
-} from '@weavr/react-sdk'
+} from 'weavr-sdk-react'
 ```
 
 ---
