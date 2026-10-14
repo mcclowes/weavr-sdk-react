@@ -67,4 +67,17 @@ Object.defineProperty(window, 'OpcUxSecureClient', {
   writable: true,
 });
 
+// Pre-insert script tags for sandbox + production URLs so loadScript() short-circuits
+// in jsdom (where <script src> never actually fires onload).
+for (const src of [
+  'https://sandbox.weavr.io/app/secure/static/client.1.js',
+  'https://secure.weavr.io/app/secure/static/client.1.js',
+]) {
+  if (!document.querySelector(`script[src="${src}"]`)) {
+    const s = document.createElement('script');
+    s.src = src;
+    document.head.appendChild(s);
+  }
+}
+
 export { mockSecureInput, mockSecureSpan, mockForm };

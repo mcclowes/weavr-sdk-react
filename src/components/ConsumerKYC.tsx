@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect, useMemo } from 'react';
 import type { ConsumerKYCMessage } from '../types';
 import { useAssociatedClient } from '../hooks/useAssociatedClient';
@@ -41,7 +43,10 @@ export function ConsumerKYC({
   const { client, isAssociated, error: associateError } = useAssociatedClient(accessToken);
   const themeContext = useOptionalWeavrTheme();
   const containerRef = useRef<HTMLDivElement>(null);
-  const initializedRef = useRef(false);
+  const initializedKeyRef = useRef<string | null>(null);
+
+  const callbacksRef = useRef({ onMessage, onError });
+  callbacksRef.current = { onMessage, onError };
 
   // Merge theme CSS with custom CSS
   const mergedCustomCssStr = useMemo(() => {
@@ -55,16 +60,16 @@ export function ConsumerKYC({
     return customCssStr;
   }, [useTheme, themeContext, customCssStr]);
 
-  // Report association errors
   useEffect(() => {
     if (associateError) {
-      onError?.(associateError);
+      callbacksRef.current.onError?.(associateError);
     }
-  }, [associateError, onError]);
+  }, [associateError]);
 
-  // Initialize Consumer KYC once associated
   useEffect(() => {
-    if (!containerRef.current || !client || !isAssociated || initializedRef.current) return;
+    if (!containerRef.current || !client || !isAssociated) return;
+    const key = `${reference}|${lang ?? ''}|${customCss ?? ''}|${mergedCustomCssStr ?? ''}`;
+    if (initializedKeyRef.current === key) return;
 
     try {
       client.consumer_kyc().init({
@@ -73,18 +78,20 @@ export function ConsumerKYC({
         lang,
         customCss,
         customCssStr: mergedCustomCssStr,
-        onMessage,
-        onError,
+        onMessage: (msg) => callbacksRef.current.onMessage?.(msg),
+        onError: (err) => callbacksRef.current.onError?.(err),
       });
-      initializedRef.current = true;
-    } catch (error) {
-      onError?.(error instanceof Error ? error : new Error('Failed to initialize Consumer KYC'));
+      initializedKeyRef.current = key;
+    } catch (err) {
+      const e = err instanceof Error ? err : new Error('Failed to initialize Consumer KYC');
+      console.error('[weavr-sdk-react] ConsumerKYC init failed:', e);
+      callbacksRef.current.onError?.(e);
     }
-  }, [client, isAssociated, reference, lang, customCss, mergedCustomCssStr, onMessage, onError]);
+  }, [client, isAssociated, reference, lang, customCss, mergedCustomCssStr]);
 
   if (associateError) {
     return (
-      <div className={className} style={style}>
+      <div className={className} style={style} role="alert">
         Authentication failed: {associateError.message}
       </div>
     );
@@ -92,7 +99,7 @@ export function ConsumerKYC({
 
   if (!isAssociated) {
     return (
-      <div className={className} style={style}>
+      <div className={className} style={style} role="status" aria-live="polite">
         Loading KYC...
       </div>
     );

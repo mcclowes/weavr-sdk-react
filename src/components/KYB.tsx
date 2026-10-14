@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect, useState, useCallback, useMemo } from 'react';
 import type { KYBAuthObject, KYBConfig, KYBMessageType } from '../types';
 import { useAssociatedClient } from '../hooks/useAssociatedClient';
@@ -26,9 +28,6 @@ export interface KYBProps {
   /**
    * Handler for manual verification (sandbox only).
    * When provided, shows a "Verify Manually" button.
-   * Implement this to call your backend which then calls:
-   * POST https://sandbox.weavr.io/simulate/api/corporates/{corporateId}/verify
-   * with header: programme-key: {your-programme-key}
    */
   onManualVerify?: () => Promise<void>;
 }
@@ -49,29 +48,26 @@ export function KYB({
   const { environment } = useWeavr();
   const themeContext = useOptionalWeavrTheme();
   const containerRef = useRef<HTMLDivElement>(null);
-  const initializedRef = useRef(false);
+  const initializedForAuthRef = useRef<KYBAuthObject | null>(null);
   const [isManualVerifying, setIsManualVerifying] = useState(false);
+
+  const callbacksRef = useRef({ onComplete, onClose, onError, onStepChange });
+  callbacksRef.current = { onComplete, onClose, onError, onStepChange };
 
   const showManualVerify = environment === 'sandbox' && onManualVerify;
 
-  // Merge theme CSS with config CSS
   const mergedConfig = useMemo(() => {
     const baseConfig = { ...config };
-
-    // Apply theme CSS if available and useTheme is true
     const shouldUseTheme = useTheme && themeContext;
     if (shouldUseTheme) {
       const themeCss = themeContext.getKycCss();
-      // Merge customCssStr: theme CSS first, then user's custom CSS
       baseConfig.customCssStr = config?.customCssStr
         ? `${themeCss}\n${config.customCssStr}`
         : themeCss;
     }
-
     return baseConfig;
   }, [config, useTheme, themeContext]);
 
-  // Get themed button styles
   const buttonStyle = useMemo<React.CSSProperties>(() => {
     const baseStyle: React.CSSProperties = {
       marginTop: '16px',
@@ -80,7 +76,6 @@ export function KYB({
       opacity: isManualVerifying ? 0.6 : 1,
     };
 
-    // Apply theme styles if available
     const shouldUseTheme = useTheme && themeContext;
     if (shouldUseTheme) {
       const { colors, typography, borders } = themeContext;
@@ -105,49 +100,56 @@ export function KYB({
     setIsManualVerifying(true);
     try {
       await onManualVerify();
-      onComplete?.({ manualVerification: true });
+      callbacksRef.current.onComplete?.({ manualVerification: true });
     } catch (err) {
-      onError?.(err instanceof Error ? err : new Error('Manual verification failed'));
+      callbacksRef.current.onError?.(
+        err instanceof Error ? err : new Error('Manual verification failed')
+      );
     } finally {
       setIsManualVerifying(false);
     }
-  }, [onManualVerify, onComplete, onError]);
+  }, [onManualVerify]);
 
-  // Report association errors
   useEffect(() => {
     if (associateError) {
-      onError?.(associateError);
+      callbacksRef.current.onError?.(associateError);
     }
-  }, [associateError, onError]);
+  }, [associateError]);
 
-  // Initialize KYB once associated
   useEffect(() => {
-    if (!containerRef.current || !client || !isAssociated || initializedRef.current) return;
+    if (!containerRef.current || !client || !isAssociated) return;
+    if (initializedForAuthRef.current === auth) return;
 
     const listener = (messageType: KYBMessageType, payload: unknown) => {
       switch (messageType) {
         case 'complete':
-          onComplete?.(payload);
+          callbacksRef.current.onComplete?.(payload);
           break;
         case 'close':
-          onClose?.(payload);
+          callbacksRef.current.onClose?.(payload);
           break;
         case 'error':
-          onError?.(payload);
+          callbacksRef.current.onError?.(payload);
           break;
         case 'step_change':
-          onStepChange?.(payload);
+          callbacksRef.current.onStepChange?.(payload);
           break;
       }
     };
 
-    client.kyb().init(containerRef.current, auth, listener, mergedConfig);
-    initializedRef.current = true;
-  }, [client, isAssociated, auth, mergedConfig, onComplete, onClose, onError, onStepChange]);
+    try {
+      client.kyb().init(containerRef.current, auth, listener, mergedConfig);
+      initializedForAuthRef.current = auth;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to initialize KYB');
+      console.error('[weavr-sdk-react] KYB init failed:', error);
+      callbacksRef.current.onError?.(error);
+    }
+  }, [client, isAssociated, auth, mergedConfig]);
 
   if (associateError) {
     return (
-      <div className={className} style={style}>
+      <div className={className} style={style} role="alert">
         Authentication failed: {associateError.message}
       </div>
     );
@@ -155,7 +157,7 @@ export function KYB({
 
   if (!isAssociated) {
     return (
-      <div className={className} style={style}>
+      <div className={className} style={style} role="status" aria-live="polite">
         Loading KYB...
       </div>
     );

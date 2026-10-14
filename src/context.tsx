@@ -1,3 +1,5 @@
+'use client';
+
 import { createContext, useContext, useEffect, useState, useMemo, type ReactNode } from 'react';
 import type { SecureClient, InitOptions } from './types';
 import { initWeavr, type WeavrEnvironment } from './client';

@@ -26,9 +26,10 @@ function App() {
 }
 
 function PasswordForm() {
-  const { tokenize, isReady } = useSecureForm()
+  const { createInput, tokenize, isReady } = useSecureForm()
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (e) => {
+    e.preventDefault()
     const tokens = await tokenize()
     // Send tokens to your server
   }
@@ -102,11 +103,12 @@ import { SecureInput } from 'weavr-sdk-react'
 <SecureInput
   name="password"
   type="password"
-  placeholder="Enter password"
-  showStrength={true}
+  options={{ placeholder: 'Enter password' }}
+  ariaLabel="Password"
   onReady={() => console.log('Input ready')}
-  onChange={(e) => console.log('Has value:', e.hasValue)}
+  onChange={(e) => console.log('Empty:', e.empty, 'Length:', e.length)}
   onStrength={(e) => console.log('Strength:', e.strength)}
+  onError={(err) => console.error(err)}
 />
 ```
 
@@ -114,11 +116,13 @@ import { SecureInput } from 'weavr-sdk-react'
 |------|------|-------------|
 | `name` | `string` | Form field name (required) |
 | `type` | `'password' \| 'confirmPassword' \| 'passCode' \| 'confirmPassCode' \| 'cardPin'` | Input type (required) |
-| `placeholder` | `string` | Placeholder text |
-| `showStrength` | `boolean` | Show password strength indicator |
-| `style` | `SecureElementStyle` | Weavr style object (see Styling) |
+| `options` | `SecureInputOptions` | Weavr options (`placeholder`, `maxlength`, `style`, `classNames`) |
+| `ariaLabel` | `string` | Accessible label for screen readers |
+| `styleOverrides` | `SecureElementStyles` | Style overrides applied on top of theme styles |
 | `className` | `string` | CSS class for container |
 | `containerStyle` | `CSSProperties` | Inline styles for container |
+
+> Password strength is enabled automatically when `type="password"`; listen via `onStrength`.
 
 **Events:**
 
@@ -129,7 +133,8 @@ import { SecureInput } from 'weavr-sdk-react'
 | `onFocus` | `void` | Input focused |
 | `onBlur` | `void` | Input blurred |
 | `onKeyUp` | `KeyboardEvent` | Key released |
-| `onStrength` | `{ strength: 0-4 }` | Password strength updated |
+| `onStrength` | `{ strength: 'weak' \| 'fair' \| 'strong', score }` | Password strength updated |
+| `onError` | `Error` | Initialization or cleanup error |
 
 **Ref Methods:**
 
