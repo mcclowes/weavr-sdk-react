@@ -9,11 +9,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- `"use client"` directives on all browser-side modules for Next.js App Router compatibility
+- SSR guards on `client.ts` entry points — helpful errors instead of crashes in non-browser environments
+- Configurable timeouts on script load, `associateUserToken`, and `setUserToken`
+- Proper init state machine (`idle | loading | ready | failed`) in `initWeavr`
+- `onError` callback on `SecureInput` and `SecureSpan` to surface previously-swallowed errors
+- `ariaLabel` prop on `SecureInput` and `SecureSpan`; `role="status"` / `role="alert"` on loading and error states
+- `reassociate()` on `useAssociatedClient` return value for token refresh flows
+- `format:check` step in CI
+- `test:coverage` script
 - ESLint configuration with TypeScript and React rules
 - Prettier configuration for consistent code formatting
 - Husky pre-commit hooks with lint-staged integration
 - CONTRIBUTING.md with contribution guidelines
 - This CHANGELOG.md file
+
+### Changed
+
+- `useAssociatedClient` no longer auto-prepends `"Bearer "` — pass the token exactly as the Weavr client expects it
+- `useAssociatedClient` now safely handles unmount during async association
+- `KYC` / `KYB` / `ConsumerKYC` now re-initialize when the `auth` object changes, and no longer re-run effects when only callback identities change
+- `@typescript-eslint/no-explicit-any` and `react-hooks/exhaustive-deps` upgraded from `warn` to `error`
+
+### Removed
+
+- Unused `DisplayModule` type (it was never exported or used internally)
+
+### Fixed
+
+- Silent `catch {}` blocks in `SecureInput` / `SecureSpan` cleanup now log and surface errors via `onError`
 
 ## [0.1.0] - 2024-01-01
 

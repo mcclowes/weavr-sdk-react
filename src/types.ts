@@ -199,13 +199,6 @@ export interface ConsumerKYCModule {
   init(options: ConsumerKYCOptions): void;
 }
 
-// Display module for showing sensitive data
-export interface DisplayModule {
-  cardNumber(options: SecureSpanOptions): SecureSpanElement;
-  cvv(options: SecureSpanOptions): SecureSpanElement;
-  cardPin(options: SecureSpanOptions): SecureSpanElement;
-}
-
 // Span options for creating secure spans
 export interface SpanOptions {
   style?: SecureElementStyles;
@@ -221,7 +214,6 @@ export interface SecureClient {
   kyb(): KYBModule;
   kyc(): KYCModule;
   consumer_kyc(): ConsumerKYCModule;
-  display: DisplayModule;
 }
 
 // Global declaration for window.OpcUxSecureClient

@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect, useMemo } from 'react';
 import type { KYCAuthObject, KYCConfig, KYCMessageType } from '../types';
 import { useAssociatedClient } from '../hooks/useAssociatedClient';
@@ -38,60 +40,63 @@ export function KYC({
   const { client, isAssociated, error: associateError } = useAssociatedClient(auth.accessToken);
   const themeContext = useOptionalWeavrTheme();
   const containerRef = useRef<HTMLDivElement>(null);
-  const initializedRef = useRef(false);
+  const initializedForAuthRef = useRef<KYCAuthObject | null>(null);
 
-  // Merge theme CSS with config CSS
+  const callbacksRef = useRef({ onComplete, onClose, onError, onStepChange });
+  callbacksRef.current = { onComplete, onClose, onError, onStepChange };
+
   const mergedConfig = useMemo(() => {
     const baseConfig = { ...config };
-
-    // Apply theme CSS if available and useTheme is true
     const shouldUseTheme = useTheme && themeContext;
     if (shouldUseTheme) {
       const themeCss = themeContext.getKycCss();
-      // Merge customCssStr: theme CSS first, then user's custom CSS
       baseConfig.customCssStr = config?.customCssStr
         ? `${themeCss}\n${config.customCssStr}`
         : themeCss;
     }
-
     return baseConfig;
   }, [config, useTheme, themeContext]);
 
-  // Report association errors
   useEffect(() => {
     if (associateError) {
-      onError?.(associateError);
+      callbacksRef.current.onError?.(associateError);
     }
-  }, [associateError, onError]);
+  }, [associateError]);
 
-  // Initialize KYC once associated
   useEffect(() => {
-    if (!containerRef.current || !client || !isAssociated || initializedRef.current) return;
+    if (!containerRef.current || !client || !isAssociated) return;
+    if (initializedForAuthRef.current === auth) return;
 
     const listener = (messageType: KYCMessageType, payload: unknown) => {
       switch (messageType) {
         case 'complete':
-          onComplete?.(payload);
+          callbacksRef.current.onComplete?.(payload);
           break;
         case 'close':
-          onClose?.(payload);
+          callbacksRef.current.onClose?.(payload);
           break;
         case 'error':
-          onError?.(payload);
+          callbacksRef.current.onError?.(payload);
           break;
         case 'step_change':
-          onStepChange?.(payload);
+          callbacksRef.current.onStepChange?.(payload);
           break;
       }
     };
 
-    client.kyc().init(containerRef.current, auth, listener, mergedConfig);
-    initializedRef.current = true;
-  }, [client, isAssociated, auth, mergedConfig, onComplete, onClose, onError, onStepChange]);
+    try {
+      client.kyc().init(containerRef.current, auth, listener, mergedConfig);
+      initializedForAuthRef.current = auth;
+    } catch (err) {
+      const error = err instanceof Error ? err : new Error('Failed to initialize KYC');
+      console.error('[weavr-sdk-react] KYC init failed:', error);
+      callbacksRef.current.onError?.(error);
+    }
+  }, [client, isAssociated, auth, mergedConfig]);
 
   if (associateError) {
     return (
-      <div className={className} style={style}>
+      <div className={className} style={style} role="alert">
         Authentication failed: {associateError.message}
       </div>
     );
@@ -99,7 +104,7 @@ export function KYC({
 
   if (!isAssociated) {
     return (
-      <div className={className} style={style}>
+      <div className={className} style={style} role="status" aria-live="polite">
         Loading KYC...
       </div>
     );

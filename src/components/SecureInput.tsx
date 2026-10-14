@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect, useImperativeHandle, forwardRef, useState, useMemo } from 'react';
 import type {
   SecureInputElement,
@@ -38,6 +40,10 @@ export interface SecureInputProps {
   onKeyUp?: (event: KeyboardEvent) => void;
   /** Called with password strength data (password type only) */
   onStrength?: (data: SecureInputStrengthEvent) => void;
+  /** Accessible label announced to screen readers (forwarded to the iframe container) */
+  ariaLabel?: string;
+  /** Called on initialization errors and swallowed-cleanup errors */
+  onError?: (error: Error) => void;
 }
 
 export interface SecureInputRef {
@@ -68,6 +74,8 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(function
     onBlur,
     onKeyUp,
     onStrength,
+    ariaLabel,
+    onError,
   },
   ref
 ) {
@@ -79,8 +87,8 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(function
   const [error, setError] = useState<string | null>(null);
 
   // Store callbacks in refs so they don't trigger re-renders
-  const callbacksRef = useRef({ onReady, onChange, onFocus, onBlur, onKeyUp, onStrength });
-  callbacksRef.current = { onReady, onChange, onFocus, onBlur, onKeyUp, onStrength };
+  const callbacksRef = useRef({ onReady, onChange, onFocus, onBlur, onKeyUp, onStrength, onError });
+  callbacksRef.current = { onReady, onChange, onFocus, onBlur, onKeyUp, onStrength, onError };
 
   // Compute merged styles: theme styles -> options.style -> styleOverrides
   const mergedOptions = useMemo(() => {
@@ -174,30 +182,36 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(function
 
       element.mount(containerRef.current);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create secure input';
-      setError(message);
-      // Clean up form if element creation failed
+      const error = err instanceof Error ? err : new Error('Failed to create secure input');
+      console.error('[weavr-sdk-react] SecureInput init failed:', error);
+      setError(error.message);
+      callbacksRef.current.onError?.(error);
       if (form && !element) {
         try {
           form.destroy();
-        } catch {
-          // Ignore cleanup errors
+        } catch (cleanupErr) {
+          const ce = cleanupErr instanceof Error ? cleanupErr : new Error(String(cleanupErr));
+          console.error('[weavr-sdk-react] SecureInput form cleanup failed:', ce);
+          callbacksRef.current.onError?.(ce);
         }
       }
       return;
     }
 
     return () => {
-      // Destroying the element and form cleans up all listeners
       try {
-        if (elementRef.current) {
-          elementRef.current.destroy();
-        }
-        if (formRef.current) {
-          formRef.current.destroy();
-        }
-      } catch {
-        // Ignore cleanup errors
+        elementRef.current?.destroy();
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error(String(err));
+        console.error('[weavr-sdk-react] SecureInput element.destroy failed:', e);
+        callbacksRef.current.onError?.(e);
+      }
+      try {
+        formRef.current?.destroy();
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error(String(err));
+        console.error('[weavr-sdk-react] SecureInput form.destroy failed:', e);
+        callbacksRef.current.onError?.(e);
       }
       elementRef.current = null;
       formRef.current = null;
@@ -207,7 +221,7 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(function
 
   if (!isInitialized) {
     return (
-      <div className={className} style={containerStyle}>
+      <div className={className} style={containerStyle} role="status" aria-live="polite">
         Loading...
       </div>
     );
@@ -215,11 +229,17 @@ export const SecureInput = forwardRef<SecureInputRef, SecureInputProps>(function
 
   if (error) {
     return (
-      <div className={className} style={{ ...containerStyle, color: '#dc3545', fontSize: 14 }}>
+      <div
+        className={className}
+        style={{ ...containerStyle, color: '#dc3545', fontSize: 14 }}
+        role="alert"
+      >
         {error}
       </div>
     );
   }
 
-  return <div ref={containerRef} className={className} style={containerStyle} />;
+  return (
+    <div ref={containerRef} className={className} style={containerStyle} aria-label={ariaLabel} />
+  );
 });

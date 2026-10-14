@@ -1,3 +1,5 @@
+'use client';
+
 import { useRef, useEffect, useImperativeHandle, forwardRef, useState, useMemo } from 'react';
 import type { SecureSpanElement, SecureSpanType, SecureElementStyles } from '../types';
 import { useWeavr } from '../context';
@@ -18,10 +20,14 @@ export interface SecureSpanProps {
   useTheme?: boolean;
   /** Style overrides to apply on top of theme styles */
   styleOverrides?: SecureElementStyles;
+  /** Accessible label announced to screen readers */
+  ariaLabel?: string;
   /** Called when the span is ready */
   onReady?: () => void;
   /** Called when the displayed value changes */
   onChange?: () => void;
+  /** Called on initialization or cleanup errors */
+  onError?: (error: Error) => void;
 }
 
 export interface SecureSpanRef {
@@ -38,8 +44,10 @@ export const SecureSpan = forwardRef<SecureSpanRef, SecureSpanProps>(function Se
     containerStyle,
     useTheme = true,
     styleOverrides,
+    ariaLabel,
     onReady,
     onChange,
+    onError,
   },
   ref
 ) {
@@ -49,17 +57,13 @@ export const SecureSpan = forwardRef<SecureSpanRef, SecureSpanProps>(function Se
   const elementRef = useRef<SecureSpanElement | null>(null);
   const [error, setError] = useState<string | null>(null);
 
-  // Store callbacks in refs so they don't trigger re-renders
-  const callbacksRef = useRef({ onReady, onChange });
-  callbacksRef.current = { onReady, onChange };
+  const callbacksRef = useRef({ onReady, onChange, onError });
+  callbacksRef.current = { onReady, onChange, onError };
 
-  // Compute merged styles: theme styles -> weavrStyle -> styleOverrides
   const mergedStyle = useMemo(() => {
-    // Get theme styles if theme is available and useTheme is true
     const shouldUseTheme = useTheme && themeContext;
     const themeStyles = shouldUseTheme ? themeContext.getSpanStyles(type) : null;
 
-    // Merge styles: theme -> weavrStyle -> styleOverrides
     let result: SecureElementStyles | undefined;
 
     if (themeStyles) {
@@ -81,7 +85,6 @@ export const SecureSpan = forwardRef<SecureSpanRef, SecureSpanProps>(function Se
     return result;
   }, [type, useTheme, themeContext, weavrStyle, styleOverrides]);
 
-  // Stabilize style by serializing
   const styleKey = useMemo(() => JSON.stringify(mergedStyle), [mergedStyle]);
 
   useImperativeHandle(ref, () => ({
@@ -89,36 +92,35 @@ export const SecureSpan = forwardRef<SecureSpanRef, SecureSpanProps>(function Se
   }));
 
   useEffect(() => {
-    // SecureSpan requires stepped-up authentication (associate() must be called first)
     if (!containerRef.current || !token || !client || !isInitialized) return;
 
     let element: SecureSpanElement | null = null;
     const parsedStyle = styleKey ? JSON.parse(styleKey) : undefined;
 
     try {
-      // Use the correct Weavr SDK API: client.span(type, token)
       element = client.span(type, token, parsedStyle ? { style: parsedStyle } : undefined);
       elementRef.current = element;
       setError(null);
 
-      // Attach event listeners using refs
       element.on('ready', () => callbacksRef.current.onReady?.());
       element.on('change', () => callbacksRef.current.onChange?.());
 
       element.mount(containerRef.current);
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Failed to create secure span';
-      setError(message);
+      const e = err instanceof Error ? err : new Error('Failed to create secure span');
+      console.error('[weavr-sdk-react] SecureSpan init failed:', e);
+      setError(e.message);
+      callbacksRef.current.onError?.(e);
       return;
     }
 
     return () => {
       try {
-        if (elementRef.current) {
-          elementRef.current.destroy();
-        }
-      } catch {
-        // Ignore cleanup errors
+        elementRef.current?.destroy();
+      } catch (err) {
+        const e = err instanceof Error ? err : new Error(String(err));
+        console.error('[weavr-sdk-react] SecureSpan destroy failed:', e);
+        callbacksRef.current.onError?.(e);
       }
       elementRef.current = null;
     };
@@ -126,7 +128,7 @@ export const SecureSpan = forwardRef<SecureSpanRef, SecureSpanProps>(function Se
 
   if (!isInitialized) {
     return (
-      <div className={className} style={containerStyle}>
+      <div className={className} style={containerStyle} role="status" aria-live="polite">
         Loading...
       </div>
     );
@@ -134,11 +136,17 @@ export const SecureSpan = forwardRef<SecureSpanRef, SecureSpanProps>(function Se
 
   if (error) {
     return (
-      <div className={className} style={{ ...containerStyle, color: '#dc3545', fontSize: 14 }}>
+      <div
+        className={className}
+        style={{ ...containerStyle, color: '#dc3545', fontSize: 14 }}
+        role="alert"
+      >
         {error}
       </div>
     );
   }
 
-  return <div ref={containerRef} className={className} style={containerStyle} />;
+  return (
+    <div ref={containerRef} className={className} style={containerStyle} aria-label={ariaLabel} />
+  );
 });
